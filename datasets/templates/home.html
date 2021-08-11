@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Schemas{% endblock %}
+
+{% block content %}
+    <div class="row  align-items-end">
+        <div class="col col-sm-10">
+            <h1>My data schemas:</h1>
+        </div>
+        <div class="col col-sm-2">
+            <a href="{% url 'create' %}" class="btn btn-success">New schema</a>
+        </div>
+    </div>
+
+    {% if page_obj %}
+        <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Schema</th>
+              <th scope="col">Created</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for schema in page_obj %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td><a href="{% url 'schema' schema.id %}">{{ schema.name }}</a></td>
+                  <td>{{ schema.created_at|date:"Y-m-d H:i:s" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link" aria-hidden="true">&laquo;</span></li>
+                {% endif %}
+
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                            {{ page_obj.paginator.num_pages }}
+                        </a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link" aria-hidden="true">&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <p>No schemas</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Create schema{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="row  align-items-end">
+            <div class="col col-sm-10">
+                <h1>New data schema</h1>
+            </div>
+            <div class="col col-sm-2">
+                <input type="submit" value="Submit" class="btn btn-primary">
+            </div>
+        </div>
+        <div class="mb-3 row align-items-center">
+            <div class="col-auto">
+                <label for="{{ form.name.id_for_label }}" class="form-label">Schema name:</label>
+            </div>
+            <div class="col-auto">
+                {{ form.name }}
+            </div>
+{#            <div class="col-auto">#}
+{#                <span id="passwordHelpInline" class="form-text">#}
+{#                    Only latin letters or numbers#}
+{#                </span>#}
+{#            </div>#}
+        </div>
+        {% for error in form.name.errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+
+        <h3>Schema columns:</h3>
+
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+
+        {{ columns.management_form }}
+        <div id="columns">
+        {% for col in columns %}
+            <div class="mb-3 row align-items-end">
+                <div class="col-1">
+                    <label for="{{ col.order.id_for_label }}" class="form-label">Order</label>
+                    {{col.order}}
+                </div>
+                <div class="col">
+                    <label for="{{ col.name.id_for_label }}" class="form-label">Column name</label>
+                    {{col.name}}
+                </div>
+                <div class="col">
+                    <label for="{{ col.data_type.id_for_label }}" class="form-label">Type</label>
+                    {{col.data_type}}
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-outline-primary me-2" id="set-{{ forloop.counter0 }}-up">
+                        UP
+                    </button>
+                    <button type="button" class="btn btn-outline-primary me-2" id="set-{{ forloop.counter0 }}-down">
+                        DOWN
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" id="set-{{ forloop.counter0 }}-delete">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+
+        <div  class="mb-3">
+            <button id="add_column" type="button" class="btn btn-success">Add column</button>
+        </div>
+    </form>
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+        "use strict";
+
+        let totalForms = document.querySelector("#id_schemacolumn_set-TOTAL_FORMS");
+        const MIN_NUM_FORMS = parseInt(document.getElementById('id_schemacolumn_set-MIN_NUM_FORMS').value);
+
+        function getOrder(column_div) {
+            return column_div.firstElementChild.firstElementChild.nextElementSibling;
+        }
+
+        function getName(column_div) {
+            return column_div.firstElementChild.nextElementSibling.firstElementChild.nextElementSibling;
+        }
+
+        function getType(column_div) {
+            return column_div.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.nextElementSibling;
+        }
+
+        function setOrderValue(column_div, new_value) {
+            let order = getOrder(column_div);
+            order.value = new_value;
+        }
+
+        function getOrderValue(column_div) {
+            let order = getOrder(column_div);
+            return order.value;
+        }
+
+        function resetColumnIds(item, id) {
+            const formRegex = RegExp(`set-(\\d){1}-`, 'g');
+            item.innerHTML = item.innerHTML.replace(formRegex, `set-${id}-`);
+        }
+
+        function deleteColumn(col_div) {
+            if (parseInt(totalForms.value) === MIN_NUM_FORMS) {
+                return
+            }
+
+            let next_div = col_div.nextElementSibling;
+
+            col_div.parentNode.removeChild(col_div);
+            totalForms.setAttribute('value', document.getElementById('columns').childElementCount);
+
+            let new_order, name, type_;
+            while (next_div  !== null) {
+                new_order = getOrderValue(next_div) - 1;
+                name = getName(next_div).value;
+                type_ = getType(next_div).value;
+
+                resetColumnIds(next_div, new_order - 1);
+
+                setOrderValue(next_div, new_order);
+                getName(next_div).value = name;
+                getType(next_div).value = type_;
+
+                next_div = next_div.nextElementSibling;
+            }
+        }
+
+        function swapColumn(col1, col2) {
+            let name1 = getName(col1).value;
+            let type1 = getType(col1).value;
+
+            getName(col1).value = getName(col2).value;
+            getType(col1).value = getType(col2).value;
+
+            getName(col2).value = name1;
+            getType(col2).value = type1;
+        }
+
+        function moveColumnUp(col_div) {
+            let prev_div = col_div.previousElementSibling;
+            if (prev_div !== null) {
+                swapColumn(prev_div, col_div);
+            }
+        }
+
+        function moveColumnDown(col_div) {
+            let next_div = col_div.nextElementSibling;
+            if (next_div !== null) {
+                swapColumn(col_div, next_div);
+            }
+        }
+
+        document.getElementById("add_column").onclick = function() {
+            let columns = document.getElementById('columns');
+            let new_column = columns.firstElementChild.cloneNode(true);
+            const columns_count = document.getElementById('columns').childElementCount;
+
+            columns.appendChild(new_column);
+            totalForms.setAttribute('value', columns_count + 1);
+
+            resetColumnIds(new_column, columns_count);
+            setOrderValue(new_column, columns_count + 1);
+
+            document.getElementById(`set-${columns_count}-delete`).onclick = function () {
+                deleteColumn(this.parentNode.parentNode);
+            }
+            document.getElementById(`set-${columns_count}-up`).onclick = function () {
+                moveColumnUp(this.parentNode.parentNode);
+            }
+            document.getElementById(`set-${columns_count}-down`).onclick = function () {
+                moveColumnDown(this.parentNode.parentNode);
+            }
+        };
+
+        for (let i = 0; i < totalForms.value; i++) {
+            document.getElementById(`set-${i}-delete`).onclick = function () {
+                deleteColumn(this.parentNode.parentNode);
+            }
+            document.getElementById(`set-${i}-up`).onclick = function () {
+                moveColumnUp(this.parentNode.parentNode);
+            }
+            document.getElementById(`set-${i}-down`).onclick = function () {
+                moveColumnDown(this.parentNode.parentNode);
+            }
+        }
+    </script>
+{% endblock %}

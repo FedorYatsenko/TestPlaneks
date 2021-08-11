@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Schema{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>Data schema "{{dataschema.name}}"</h1>
+        <p>Created at: {{dataschema.created_at|date:"Y-m-d H:i:s"}}</p>
+        <br>
+    </section>
+
+    <section>
+        <h3> Columns: </h3>
+        <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">Order</th>
+              <th scope="col">Name</th>
+              <th scope="col">Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for column in dataschema.schemacolumn_set.all %}
+                <tr>
+                  <td>{{ column.order }}</td>
+                  <td>{{ column.name }}</td>
+                  <td>{{column.get_data_type_display}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+    </section>
+
+    <section>
+        <h3> New dataset: </h3>
+        <form method="POST">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+            <button type="submit" value="Submit" class="btn btn-success">Generate data</button>
+        </form>
+    </section>
+{% endblock %}

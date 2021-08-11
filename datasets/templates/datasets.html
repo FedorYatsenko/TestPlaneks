@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Datasets{% endblock %}
+
+{% block content %}
+    {% if datasets %}
+        <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Schema</th>
+              <th scope="col">Status</th>
+              <th scope="col">Created</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ds in datasets %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ ds.data_schema.name }}</td>
+                  <td>
+                      {% if ds.is_ready %}
+                        <span class="badge bg-success">{{ ds.get_status_display  }} </span>
+                      {% else %}
+                        <span class="badge bg-secondary">{{ ds.get_status_display  }} </span>
+                      {% endif %}
+                  </td>
+                  <td>{{ ds.created_at|date:"Y-m-d H:i:s" }}</td>
+                  <td>{% if ds.is_ready %}
+                      <a href="{% url 'download' ds.id %}"> Download</a>
+                  {% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No datasets</p>
+    {% endif %}
+{% endblock %}
