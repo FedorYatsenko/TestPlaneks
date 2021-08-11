@@ -8,10 +8,6 @@ import django_heroku
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
-
-
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = False
 
@@ -122,3 +118,6 @@ LOGIN_REDIRECT_URL = 'home'
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 15 * 60
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
