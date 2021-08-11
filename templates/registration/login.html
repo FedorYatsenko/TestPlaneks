@@ -19,13 +19,13 @@
     <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
 
-        <div class="form-group">
-          {{ form.username.label_tag }}
-          {{ form.username }}
+        <div class="mb-3 row align-items-center">
+            <div class="col-auto">{{ form.username.label_tag }}</div>
+            <div class="col-auto">{{ form.username }}</div>
         </div>
-        <div class="form-group">
-          {{ form.password.label_tag }}
-          {{ form.password }}
+        <div class="mb-3 row align-items-center">
+          <div class="col-auto">{{ form.password.label_tag }}</div>
+          <div class="col-auto">{{ form.password }}</div>
         </div>
 
         {% if form.errors %}
