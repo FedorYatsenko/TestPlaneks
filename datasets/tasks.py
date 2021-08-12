@@ -1,3 +1,5 @@
+import os
+
 from celery import shared_task
 from django.core.files import File
 
@@ -15,7 +17,7 @@ def test(dataset_id: int):
     path = generator.generate(dataset)
 
     with open(path, 'rb') as f:
-        file = File(f)
+        file = File(f, name=os.path.basename(path))
         dataset.file = file
 
     dataset.status = Dataset.READY
