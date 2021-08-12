@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -111,8 +112,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-MEDIA_URL = AWS_URL
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# PUBLIC_MEDIA_LOCATION = 'public'
+# MEDIA_URL = f"{AWS_URL}/{PUBLIC_MEDIA_LOCATION}"
+# DEFAULT_FILE_STORAGE = 'hello_django.storage_backends.PublicMediaStorage'
+
+PRIVATE_MEDIA_LOCATION = 'private'
+PRIVATE_FILE_STORAGE = 'TestPlaneks.storage_backends.PrivateMediaStorage'
 
 # Default primary key field type
 

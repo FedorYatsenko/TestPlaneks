@@ -11,7 +11,10 @@ def test(dataset_id: int):
     dataset.save()
 
     generator = CsvGenerator(columns=SchemaColumn.objects.filter(data_schema_id=dataset.data_schema_id).all())
-    dataset.file = generator.generate(dataset)
+    path = generator.generate(dataset)
+
+    with open(path, 'rb') as file:
+        dataset.file = file
 
     dataset.status = Dataset.READY
     dataset.save()

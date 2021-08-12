@@ -50,7 +50,7 @@ class CsvGenerator:
         return row
 
     def generate(self, dataset: Dataset):
-        path = os.path.join(dataset.DIRECTORY, f"dataset_{dataset.id}.csv")
+        path = os.path.join(dataset.TEMP_DIRECTORY, f"dataset_{dataset.id}.csv")
         with open(path, 'w') as file:
             csv_writer = csv.DictWriter(file, delimiter=dataset.delimiter, quotechar=dataset.quote_char,
                                         fieldnames=[c.name for c in self._columns])

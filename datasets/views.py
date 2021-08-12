@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.views import generic
 from django.http import Http404, FileResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -109,4 +109,4 @@ def download(request, dataset_id):
     if dataset.created_by != request.user:
         raise Http404('File not found')
 
-    return FileResponse(open(dataset.file, 'rb'))
+    return redirect(dataset.file.url)

@@ -3,6 +3,8 @@ import os
 from django.db import models
 from django.conf import settings
 
+from TestPlaneks.storage_backends import PrivateMediaStorage
+
 
 class DataSchema(models.Model):
     id = models.AutoField(primary_key=True)
@@ -45,7 +47,7 @@ class SchemaColumn(models.Model):
 
 
 class Dataset(models.Model):
-    DIRECTORY = os.path.join(settings.MEDIA_ROOT, 'datasets')
+    TEMP_DIRECTORY = os.path.join(settings.BASE_DIR, 'tmp')
 
     NEW = 'N'
     PROCESSING = 'P'
@@ -89,7 +91,7 @@ class Dataset(models.Model):
     delimiter = models.CharField(max_length=1, choices=DELIMITER_CHOICES, default=SEMICOLON)
     quote_char = models.CharField(max_length=1, choices=QUOTE_CHOICES, default=DOUBLE_QUOTES)
 
-    file = models.FilePathField(path=DIRECTORY, null=True, default=None)
+    file = models.FileField(storage=PrivateMediaStorage(), default=None)
 
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
