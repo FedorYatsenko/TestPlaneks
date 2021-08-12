@@ -14,6 +14,16 @@ DEBUG = False
 ALLOWED_HOSTS = ['test-planeks.herokuapp.com', '.localhost', '127.0.0.1']
 
 
+# AWS S3 SETTINGS
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+AWS_DEFAULT_ACL = None
+AWS_S3_REGION_NAME = 'us-east-2'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -101,9 +111,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-STATIC_URL = '/static/'
+MEDIA_URL = AWS_URL
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Default primary key field type
 
@@ -118,6 +127,7 @@ LOGIN_REDIRECT_URL = 'home'
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 15 * 60
+
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())

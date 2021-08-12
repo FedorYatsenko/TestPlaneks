@@ -2,3 +2,5 @@ django==3.2.*
 celery==5.1.*
 django-heroku
 gunicorn
+boto3
+django-storages
