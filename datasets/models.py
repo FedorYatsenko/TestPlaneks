@@ -47,7 +47,7 @@ class SchemaColumn(models.Model):
 
 
 class Dataset(models.Model):
-    TEMP_DIRECTORY = os.path.join(settings.BASE_DIR, 'tmp')
+    TEMP_DIRECTORY = '/tmp'
 
     NEW = 'N'
     PROCESSING = 'P'
