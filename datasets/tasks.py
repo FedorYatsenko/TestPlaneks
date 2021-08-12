@@ -1,4 +1,5 @@
 from celery import shared_task
+from django.core.files import File
 
 from .models import Dataset, SchemaColumn
 from .generator import CsvGenerator
@@ -13,7 +14,8 @@ def test(dataset_id: int):
     generator = CsvGenerator(columns=SchemaColumn.objects.filter(data_schema_id=dataset.data_schema_id).all())
     path = generator.generate(dataset)
 
-    with open(path, 'rb') as file:
+    with open(path, 'rb') as f:
+        file = File(f)
         dataset.file = file
 
     dataset.status = Dataset.READY
