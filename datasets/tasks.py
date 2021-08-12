@@ -20,5 +20,5 @@ def test(dataset_id: int):
         file = File(f, name=os.path.basename(path))
         dataset.file = file
 
-    dataset.status = Dataset.READY
-    dataset.save()
+        dataset.status = Dataset.READY
+        dataset.save()
